@@ -1,0 +1,8 @@
+.bin
+.idea
+.vscode
+
+.env
+
+logs/
+configs/production.yml

@@ -1,0 +1,22 @@
+http:
+  port: 5021
+  timeouts:
+    read: 10s
+    write: 10s
+  maxHeaderMegabytes: 2
+
+cache:
+  ttl: 60s
+
+limiter:
+  rps: 10
+  burst: 20
+  ttl: 10m
+
+database:
+  postgres:
+    user: "postgres"
+    host: "localhost"
+    port: "5432"
+    dbName: "fakapi"
+    sslMode: "disable"
