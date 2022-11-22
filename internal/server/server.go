@@ -1,31 +1,28 @@
 package server
 
 import (
-	"context"
 	"github.com/onemgvv/fakapi/internal/config"
-	"net/http"
+	"github.com/valyala/fasthttp"
 )
 
 type Server struct {
-	httpServer *http.Server
+	httpServer *fasthttp.Server
 }
 
-func NewServer(cfg *config.Config, handler http.Handler) *Server {
+func NewServer(cfg *config.Config, handler fasthttp.RequestHandler) *Server {
 	return &Server{
-		httpServer: &http.Server{
-			Addr:           ":" + cfg.HTTP.Port,
-			Handler:        handler,
-			ReadTimeout:    cfg.HTTP.Timeout.Read,
-			WriteTimeout:   cfg.HTTP.Timeout.Write,
-			MaxHeaderBytes: cfg.HTTP.MaxHeaderMegabytes,
+		httpServer: &fasthttp.Server{
+			Handler:      handler,
+			ReadTimeout:  cfg.HTTP.Timeout.Read,
+			WriteTimeout: cfg.HTTP.Timeout.Write,
 		},
 	}
 }
 
-func (s *Server) Run() error {
-	return s.httpServer.ListenAndServe()
+func (s *Server) Run(port string) error {
+	return s.httpServer.ListenAndServe(port)
 }
 
-func (s *Server) Stop(ctx context.Context) error {
-	return s.httpServer.Shutdown(ctx)
+func (s *Server) Stop() error {
+	return s.httpServer.Shutdown()
 }

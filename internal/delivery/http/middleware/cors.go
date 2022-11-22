@@ -1,19 +1,19 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	routing "github.com/qiangxue/fasthttp-routing"
 )
 
-func Cors(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "*")
-	c.Header("Access-Control-Allow-Headers", "*")
-	c.Header("Content-Type", "application/json")
+func Cors(c *routing.Context) error {
+	c.Response.Header.Set("Access-Control-Allow-Credentials", "*")
+	c.Response.Header.Set("Access-Control-Allow-Headers", "*")
+	c.Response.Header.Set("Access-Control-Allow-Methods", "*")
+	c.Response.Header.Set("Access-Control-Allow-Origin", "*")
+	c.Response.Header.Set("Content-Type", "application/json")
 
-	if c.Request.Method != "OPTIONS" {
-		c.Next()
-	} else {
-		c.AbortWithStatus(http.StatusOK)
+	if c.IsOptions() {
+		c.SuccessString("application/json", "")
 	}
+
+	return c.Next()
 }

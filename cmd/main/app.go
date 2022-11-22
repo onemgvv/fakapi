@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"github.com/joho/godotenv"
 	"github.com/onemgvv/fakapi/internal/config"
@@ -34,7 +33,7 @@ func main() {
 	app := server.NewServer(cfg, handler.InitRoutes())
 
 	go func() {
-		if err := app.Run(); errors.Is(err, http.ErrServerClosed) {
+		if err := app.Run(cfg.HTTP.Port); errors.Is(err, http.ErrServerClosed) {
 			logger.ErrorLogger.Fatalf("[Server Starting Error]: %s", err.Error())
 		}
 	}()
@@ -45,14 +44,11 @@ func main() {
 	 *	Graceful Shutdown
 	 */
 
-	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
-	defer shutdown()
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	if err = app.Stop(ctx); err != nil {
+	if err = app.Stop(); err != nil {
 		logger.ErrorLogger.Fatalf("[SHUTDOWN APP ERROR]: %v", err)
 	}
 
